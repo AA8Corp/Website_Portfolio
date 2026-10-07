@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emiliano Dunton Web Work</title>
+  <meta name="description" content="Website design and development portfolio: three brands built in three different layout styles.">
+  <meta name="theme-color" content="#f6f6f4">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23161616'/%3E%3Crect x='7' y='7' width='5' height='18' fill='%2300B8A9'/%3E%3Crect x='14' y='7' width='5' height='18' fill='%23FF5C00'/%3E%3Crect x='21' y='7' width='5' height='18' fill='%23D7263D'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f6f6f4;
+      --ink: #161616;
+      --soft: #5d5d5a;
+      --rule: #dcdcd7;
+      --font: "Bricolage Grotesque", system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1.0625rem/1.55 var(--font); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    p, h1, h2, h3 { margin: 0; }
+    :focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; border-radius: 4px; }
+    .wrap { width: min(1280px, 100% - 32px); margin-inline: auto; }
+
+    .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 24px 0; }
+    .who { font-weight: 700; font-size: 1.0625rem; }
+    .who span { color: var(--soft); font-weight: 400; }
+    .top nav { display: flex; gap: 20px; font-size: .9375rem; }
+    .top nav a { text-decoration: none; color: var(--soft); }
+    .top nav a:hover { color: var(--ink); }
+    @media (max-width: 640px) { .top nav { display: none; } }
+
+    .intro { padding: clamp(48px, 9vw, 120px) 0 clamp(40px, 6vw, 72px); display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px 64px; align-items: end; }
+    .intro h1 { font-size: clamp(2.75rem, 7vw, 6rem); font-weight: 700; line-height: .95; letter-spacing: -.035em; font-variation-settings: "opsz" 96; text-wrap: balance; }
+    .intro p { color: var(--soft); font-size: 1.1875rem; max-width: 42ch; }
+    .spectrum { display: grid; grid-template-columns: repeat(3, 1fr); height: 10px; margin-top: 8px; }
+    .spectrum i:nth-child(1) { background: linear-gradient(90deg, #0A2540 0 50%, #00B8A9 50%); }
+    .spectrum i:nth-child(2) { background: linear-gradient(90deg, #1C1C1E 0 50%, #FF5C00 50%); }
+    .spectrum i:nth-child(3) { background: linear-gradient(90deg, #111 0 50%, #D7263D 50%); }
+    @media (max-width: 860px) { .intro { grid-template-columns: 1fr; } }
+
+    .project { padding: clamp(56px, 8vw, 104px) 0; border-top: 1px solid var(--rule); }
+    .project-head { display: grid; grid-template-columns: 1.4fr 1fr; gap: 24px 64px; align-items: start; margin-bottom: 40px; }
+    .kind { color: var(--soft); font-size: .9375rem; margin-bottom: 10px; }
+    .project h2 { font-size: clamp(2.25rem, 4.6vw, 3.75rem); font-weight: 700; letter-spacing: -.03em; line-height: 1; font-variation-settings: "opsz" 96; }
+    .project-head .summary { color: var(--soft); margin-top: 16px; max-width: 52ch; }
+    .open { display: inline-flex; align-items: center; gap: 10px; margin-top: 24px; padding: 13px 20px; border-radius: 999px; background: var(--ink); color: var(--bg); text-decoration: none; font-weight: 500; }
+    .open:hover { background: #000; }
+    .facts { margin: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+    .facts > div { display: grid; grid-template-columns: 7.5rem 1fr; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule); font-size: .9688rem; }
+    .facts dt { color: var(--soft); }
+    .facts dd { margin: 0; }
+    .swatches { display: flex; gap: 6px; flex-wrap: wrap; }
+    .swatches span { width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.12); }
+    @media (max-width: 860px) { .project-head { grid-template-columns: 1fr; } }
+
+    .stage { display: grid; grid-template-columns: 1fr auto; gap: clamp(16px, 3vw, 40px); align-items: end; }
+    .frame { display: block; position: relative; text-decoration: none; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 24px 48px -24px rgba(0,0,0,.25); }
+    .frame-bar { height: 32px; display: flex; align-items: center; gap: 6px; padding: 0 12px; background: #ececea; border-bottom: 1px solid var(--rule); }
+    .frame-bar i { width: 10px; height: 10px; border-radius: 50%; background: #cfcfca; }
+    .frame-bar span { margin-left: 12px; font-size: .75rem; color: var(--soft); background: #fff; padding: 3px 10px; border-radius: 6px; }
+    .viewport { position: relative; overflow: hidden; }
+    .desktop .viewport { aspect-ratio: 1440 / 900; }
+    .phone { width: clamp(150px, 19vw, 250px); border-radius: 28px; padding: 8px; background: #161616; }
+    .phone .viewport { aspect-ratio: 390 / 844; border-radius: 21px; }
+    .viewport iframe { position: absolute; top: 0; left: 0; border: 0; transform-origin: 0 0; pointer-events: none; background: #fff; }
+    .frame:hover { box-shadow: 0 0 0 2px var(--ink), 0 24px 48px -24px rgba(0,0,0,.3); }
+    @media (max-width: 640px) { .stage { grid-template-columns: 1fr; } .phone { display: none; } }
+
+    .built { margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px 40px; list-style: none; padding: 0; }
+    .built li { border-top: 2px solid var(--ink); padding-top: 14px; }
+    .built b { display: block; font-weight: 700; margin-bottom: 4px; }
+    .built span { color: var(--soft); font-size: .9688rem; }
+    @media (max-width: 760px) { .built { grid-template-columns: 1fr; } }
+
+    .approach { padding: clamp(56px, 8vw, 104px) 0; border-top: 1px solid var(--rule); display: grid; grid-template-columns: 1fr 1.4fr; gap: 32px 64px; }
+    .approach h2 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; letter-spacing: -.03em; line-height: 1; }
+    .approach ul { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--rule); }
+    .approach li { padding: 16px 0; border-bottom: 1px solid var(--rule); color: var(--soft); }
+    .approach li b { color: var(--ink); font-weight: 500; }
+    @media (max-width: 860px) { .approach { grid-template-columns: 1fr; } }
+
+    footer { padding: 40px 0 56px; border-top: 1px solid var(--rule); color: var(--soft); font-size: .9375rem; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <p class="who">Emiliano Dunton <span>Web design and development</span></p>
+      <nav aria-label="Projects">
+        <a href="#clearline">Clearline</a>
+        <a href="#boxbolt">BoxBolt</a>
+        <a href="#concrete">Concrete Culture</a>
+      </nav>
+    </header>
+
+    <section class="intro" aria-labelledby="intro-title">
+      <div>
+        <h1 id="intro-title">Three brands. Three sites that look nothing alike.</h1>
+        <div class="spectrum" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+      <p>Each site is built from its brand kit up: a clean corporate site for a cleaning company, a rugged industrial one for a freight carrier, and a dark brutalist storefront for a streetwear label. Hand-coded HTML, CSS, and JavaScript, responsive down to phone width.</p>
+    </section>
+  </div>
+
+  <main>
+    <section class="project wrap" id="clearline" aria-labelledby="p1">
+      <div class="project-head">
+        <div>
+          <p class="kind">Commercial cleaning, clean corporate</p>
+          <h2 id="p1">Clearline Commercial Cleaning</h2>
+          <p class="summary">For office and clinic managers who need proof the job got done. The hero is a real nightly sign-off report hidden under grime: drag across it and it wipes clean, the same swoosh as the logo.</p>
+          <a class="open" href="clearline/">Open the Clearline site</a>
+        </div>
+        <dl class="facts">
+          <div><dt>Layout</dt><dd>Airy two-column grid, generous whitespace, light slate bands</dd></div>
+          <div><dt>Type</dt><dd>Sora headings, Inter body</dd></div>
+          <div><dt>Palette</dt><dd class="swatches"><span style="background:#0A2540"></span><span style="background:#00B8A9"></span><span style="background:#FFFFFF"></span><span style="background:#E8EEF2"></span></dd></div>
+        </dl>
+      </div>
+      <div class="stage">
+        <a class="frame desktop" href="clearline/" aria-label="Open the Clearline site">
+          <div class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>clearline</span></div>
+          <div class="viewport" data-w="1440"><iframe src="clearline/" title="Clearline desktop preview" loading="lazy" tabindex="-1" aria-hidden="true"></iframe></div>
+        </a>
+        <a class="frame phone" href="clearline/" aria-hidden="true" tabindex="-1">
+          <div class="viewport" data-w="390"><iframe src="clearline/" title="Clearline phone preview" loading="lazy" tabindex="-1" aria-hidden="true"></iframe></div>
+        </a>
+      </div>
+      <ul class="built">
+        <li><b>Wipe-to-clean hero</b><span>Canvas interaction with touch support and a one-click fallback</span></li>
+        <li><b>Live cost estimator</b><span>Floor area, space type, and visit frequency update the monthly range</span></li>
+        <li><b>Accessible tabs and FAQ</b><span>Arrow-key tabs, native disclosure, form validation on blur</span></li>
+      </ul>
+    </section>
+
+    <section class="project wrap" id="boxbolt" aria-labelledby="p2">
+      <div class="project-head">
+        <div>
+          <p class="kind">Box truck logistics, rugged industrial</p>
+          <h2 id="p2">BoxBolt Logistics</h2>
+          <p class="summary">Numbers over adjectives. Condensed type at billboard size, a truck that drives into the hero, a departures-board stat strip, and a dimensioned blueprint so shippers know exactly what fits.</p>
+          <a class="open" href="boxbolt/">Open the BoxBolt site</a>
+        </div>
+        <dl class="facts">
+          <div><dt>Layout</dt><dd>Heavy bordered grid, spec tables, hazard stripes</dd></div>
+          <div><dt>Type</dt><dd>Barlow Condensed headings, Barlow body</dd></div>
+          <div><dt>Palette</dt><dd class="swatches"><span style="background:#FF5C00"></span><span style="background:#1C1C1E"></span><span style="background:#3A3A3C"></span><span style="background:#FFFFFF"></span></dd></div>
+        </dl>
+      </div>
+      <div class="stage">
+        <a class="frame desktop" href="boxbolt/" aria-label="Open the BoxBolt site">
+          <div class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>boxbolt</span></div>
+          <div class="viewport" data-w="1440"><iframe src="boxbolt/" title="BoxBolt desktop preview" loading="lazy" tabindex="-1" aria-hidden="true"></iframe></div>
+        </a>
+        <a class="frame phone" href="boxbolt/" aria-hidden="true" tabindex="-1">
+          <div class="viewport" data-w="390"><iframe src="boxbolt/" title="BoxBolt phone preview" loading="lazy" tabindex="-1" aria-hidden="true"></iframe></div>
+        </a>
+      </div>
+      <ul class="built">
+        <li><b>Instant rate ticket</b><span>Distance, pallets, and pickup speed price a load with an itemized ticket</span></li>
+        <li><b>Load tracking demo</b><span>Validates load numbers and shows a live delivery timeline</span></li>
+        <li><b>SVG truck blueprint</b><span>Dimensioned drawing and coverage rings, all scalable vector</span></li>
+      </ul>
+    </section>
+
+    <section class="project wrap" id="concrete" aria-labelledby="p3">
+      <div class="project-head">
+        <div>
+          <p class="kind">Streetwear label, dark brutalist</p>
+          <h2 id="p3">Concrete Culture</h2>
+          <p class="summary">Built like a drop, not a catalog. A countdown to the next release, sold-out stamps, a sideways-scrolling lookbook, and cracked type that looks poured rather than typeset.</p>
+          <a class="open" href="concrete-culture/">Open the Concrete Culture site</a>
+        </div>
+        <dl class="facts">
+          <div><dt>Layout</dt><dd>Raw hairline grid, oversized type, scroll-snap lookbook</dd></div>
+          <div><dt>Type</dt><dd>Anton headings, Space Grotesk body</dd></div>
+          <div><dt>Palette</dt><dd class="swatches"><span style="background:#111111"></span><span style="background:#8A8D93"></span><span style="background:#EDEAE3"></span><span style="background:#D7263D"></span></dd></div>
+        </dl>
+      </div>
+      <div class="stage">
+        <a class="frame desktop" href="concrete-culture/" aria-label="Open the Concrete Culture site">
+          <div class="frame-bar" aria-hidden="true"><i></i><i></i><i></i><span>concrete-culture</span></div>
+          <div class="viewport" data-w="1440"><iframe src="concrete-culture/" title="Concrete Culture desktop preview" loading="lazy" tabindex="-1" aria-hidden="true"></iframe></div>
+        </a>
+        <a class="frame phone" href="concrete-culture/" aria-hidden="true" tabindex="-1">
+          <div class="viewport" data-w="390"><iframe src="concrete-culture/" title="Concrete Culture phone preview" loading="lazy" tabindex="-1" aria-hidden="true"></iframe></div>
+        </a>
+      </div>
+      <ul class="built">
+        <li><b>Working bag</b><span>Size picker with sold-out sizes, add and remove, modal drawer with focus handling</span></li>
+        <li><b>Drop countdown</b><span>Ticks to the next Friday release in Eastern time</span></li>
+        <li><b>Drawn product art</b><span>Every garment is SVG with a distressed print filter, no photos needed</span></li>
+      </ul>
+    </section>
+
+    <section class="approach wrap" aria-labelledby="ap">
+      <h2 id="ap">How these were built</h2>
+      <ul>
+        <li><b>No frameworks, no build step.</b> Plain HTML, CSS, and JavaScript that loads fast and runs on any static host.</li>
+        <li><b>Brand kit first.</b> Exact brand colors, the specified typefaces, and the supplied logos on every page.</li>
+        <li><b>Accessible by default.</b> Keyboard focus on every control, labeled forms, color contrast checked, reduced motion respected.</li>
+        <li><b>Mobile tested.</b> Every page checked at phone width with no sideways scrolling.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <p>Clearline, BoxBolt, and Concrete Culture are fictional brands created for demonstration. Forms and checkouts are demos and send nothing.</p>
+  </footer>
+
+  <script>
+    // Scale each live preview so a full-size page fits its frame.
+    const viewports = document.querySelectorAll(".viewport");
+    const fit = (vp) => {
+      const w = Number(vp.dataset.w);
+      const scale = vp.clientWidth / w;
+      const frame = vp.querySelector("iframe");
+      frame.style.width = `${w}px`;
+      frame.style.height = `${vp.clientHeight / scale}px`;
+      frame.style.transform = `scale(${scale})`;
+    };
+    const ro = new ResizeObserver((entries) => entries.forEach((e) => fit(e.target)));
+    viewports.forEach((vp) => ro.observe(vp));
+  </script>
+</body>
+</html>

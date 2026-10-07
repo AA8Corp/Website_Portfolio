@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Concrete Culture</title>
+  <meta name="description" content="Heavyweight streetwear rooted in city life. Limited drops, no restocks, no apologies.">
+  <meta name="theme-color" content="#111111">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23111'/%3E%3Cpath d='M4 8h10v4H8v8h6v4H4zM18 8h10v4h-6v8h6v4H18z' fill='%23EDEAE3'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <!-- shared SVG filters for concrete grain -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <filter id="grit" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/>
+      <feColorMatrix in="n" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.6 1.05" result="speck"/>
+      <feComposite in="SourceGraphic" in2="speck" operator="in"/>
+    </filter>
+  </svg>
+
+  <div class="ticker" aria-label="Drop announcement">
+    <div class="ticker-track">
+      <span>Drop 07: Curb Series lands Friday 12 PM ET</span><span>No restocks</span><span>Heavyweight only</span><span>Ships from the block</span>
+      <span aria-hidden="true">Drop 07: Curb Series lands Friday 12 PM ET</span><span aria-hidden="true">No restocks</span><span aria-hidden="true">Heavyweight only</span><span aria-hidden="true">Ships from the block</span>
+    </div>
+  </div>
+
+  <header class="head">
+    <a href="#top" class="mark" aria-label="Concrete Culture, home"><img src="../assets/logos/cc-mark-light.webp" alt="" width="84" height="42"></a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#shop">Shop</a>
+      <a href="#lookbook">Lookbook</a>
+      <a href="#block">The Block</a>
+    </nav>
+    <button class="bag-btn" type="button" aria-haspopup="dialog" aria-controls="bag">Bag <span class="bag-count" id="bag-count">0</span></button>
+  </header>
+
+  <main id="main">
+    <!-- HERO -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <h1 id="hero-title" class="hero-title">
+        <span>Built</span>
+        <span>from the</span>
+        <span>block.</span>
+      </h1>
+      <svg class="cracks" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M0 412 L120 398 L168 430 L260 404 L332 452 L410 440 M168 430 L190 488 L176 560 M332 452 L360 520" />
+        <path d="M1000 140 L890 170 L840 150 L760 196 L700 188 M840 150 L820 92 L848 30 M760 196 L748 260" />
+        <path d="M560 600 L574 540 L548 498 L590 452 L580 410" />
+      </svg>
+
+      <div class="hero-side">
+        <img class="hero-logo" src="../assets/logos/concrete-culture-light.webp" alt="Concrete Culture" width="420" height="279">
+        <div class="countdown" aria-live="off">
+          <p class="cd-label">Drop 07: Curb Series</p>
+          <div class="cd-clock" id="countdown" role="timer" aria-label="Time until Drop 07">
+            <div><b data-unit="d">00</b><span>Days</span></div>
+            <div><b data-unit="h">00</b><span>Hrs</span></div>
+            <div><b data-unit="m">00</b><span>Min</span></div>
+            <div><b data-unit="s">00</b><span>Sec</span></div>
+          </div>
+          <a href="#drop-text" class="btn btn-red">Get the drop text</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- SHOP -->
+    <section class="shop" id="shop" aria-labelledby="shop-title">
+      <div class="bar">
+        <h2 id="shop-title">Drop 06: Slab Series</h2>
+        <p>Live now. When it’s gone, it’s gone.</p>
+      </div>
+      <div class="grid" id="product-grid"><!-- products rendered by script.js --></div>
+    </section>
+
+    <!-- MANIFESTO -->
+    <section class="manifesto" aria-labelledby="mf-title">
+      <h2 id="mf-title">No restocks.<br>No apologies.</h2>
+      <ul class="rules">
+        <li><b>500 GSM</b><span>Our hoodies weigh more than most jackets. Built to outlast the trend you bought it for.</span></li>
+        <li><b>Under 300 units</b><span>Every drop. Every colorway. Numbered on the inside tag.</span></li>
+        <li><b>Made 40 mi away</b><span>Cut, sewn, and screen-printed by a shop we can drive to.</span></li>
+      </ul>
+    </section>
+
+    <!-- LOOKBOOK -->
+    <section class="lookbook" id="lookbook" aria-labelledby="lb-title">
+      <div class="bar">
+        <h2 id="lb-title">Lookbook</h2>
+        <p>Shot on the block, after dark. Scroll sideways.</p>
+      </div>
+      <div class="strip" tabindex="0" aria-label="Lookbook, scrollable">
+        <figure class="look look-a">
+          <div class="look-art" data-garment="hoodie" data-fill="#EDEAE3" data-print="#111111"></div>
+          <figcaption><b>Look 01</b><span>Slab Hoodie, bone. 5th and Main, 2:14 AM</span></figcaption>
+        </figure>
+        <figure class="look look-b">
+          <div class="look-art" data-garment="pants" data-fill="#8A8D93" data-print="#111111"></div>
+          <figcaption><b>Look 02</b><span>Rebar Cargo, concrete. Under the Route 9 overpass</span></figcaption>
+        </figure>
+        <figure class="look look-c">
+          <div class="look-art" data-garment="crew" data-fill="#D7263D" data-print="#EDEAE3"></div>
+          <figcaption><b>Look 03</b><span>Curb Crew, hazard red. Lot behind the laundromat</span></figcaption>
+        </figure>
+        <figure class="look look-d">
+          <div class="look-art" data-garment="tee" data-fill="#111111" data-print="#D7263D"></div>
+          <figcaption><b>Look 04</b><span>Cracked CC Tee, black. Rooftop on Ash St</span></figcaption>
+        </figure>
+        <figure class="look look-e">
+          <div class="look-art" data-garment="cap" data-fill="#EDEAE3" data-print="#D7263D"></div>
+          <figcaption><b>Look 05</b><span>Block 5-Panel, bone. Bus stop, last stop</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- THE BLOCK -->
+    <section class="block" id="block" aria-labelledby="block-title">
+      <div class="bar">
+        <h2 id="block-title">The Block</h2>
+        <p>The brand is the people who wear it. Pull up.</p>
+      </div>
+      <ul class="events">
+        <li><time datetime="2026-10-17">Oct 17</time><b>Night session</b><span>Eastside DIY spot. Bring a board, we bring lights.</span><em>Free</em></li>
+        <li><time datetime="2026-10-24">Oct 24</time><b>Print night</b><span>Pull your own Drop 07 tee on our press. 40 spots.</span><em>RSVP</em></li>
+        <li><time datetime="2026-11-07">Nov 07</time><b>Sneaker swap</b><span>Trade, sell, show off. Tables are first come.</span><em>Free</em></li>
+        <li><time datetime="2026-11-21">Nov 21</time><b>Drop 08 preview</b><span>Members see it first. Text list only.</span><em>Invite</em></li>
+      </ul>
+    </section>
+
+    <!-- DROP TEXT -->
+    <section class="signup" id="drop-text" aria-labelledby="dt-title">
+      <h2 id="dt-title">Get the drop text</h2>
+      <p>One text, 15 minutes before every drop. Nothing else.</p>
+      <form class="signup-form" novalidate>
+        <label for="phone">Phone number</label>
+        <div class="signup-row">
+          <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(555) 555-0123" aria-describedby="phone-msg">
+          <button class="btn btn-red" type="submit">Join the list</button>
+        </div>
+        <p id="phone-msg" class="signup-msg">Demo form. No texts are sent.</p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <img src="../assets/logos/concrete-culture-light.webp" alt="Concrete Culture" width="260" height="173">
+    <p class="foot-tag">Built from the block.</p>
+    <p class="foot-fine">Concept site for a fictional brand. <a href="../index.html">Back to portfolio</a></p>
+  </footer>
+
+  <!-- BAG -->
+  <dialog class="bag" id="bag" aria-labelledby="bag-title">
+    <div class="bag-head">
+      <h2 id="bag-title">Your bag</h2>
+      <button class="bag-close" type="button" aria-label="Close bag">
+        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 3l14 14M17 3 3 17" stroke="currentColor" stroke-width="2.5"/></svg>
+      </button>
+    </div>
+    <ul class="bag-items" id="bag-items"></ul>
+    <div class="bag-empty" id="bag-empty">
+      <p>Bag’s empty. Drop 06 won’t be here long.</p>
+      <a href="#shop" class="btn btn-bone" data-close>Shop Drop 06</a>
+    </div>
+    <div class="bag-foot" id="bag-foot" hidden>
+      <div class="bag-total"><span>Subtotal</span><b id="bag-total">$0</b></div>
+      <button class="btn btn-red btn-block" type="button" id="checkout">Check out</button>
+      <p class="bag-note" id="checkout-note">Demo store. No payment is taken.</p>
+    </div>
+  </dialog>
+
+  <script src="script.js"></script>
+</body>
+</html>

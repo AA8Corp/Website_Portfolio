@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Premium Builds</title>
+  <meta name="description" content="Premium versions of three brand sites, built with React, Three.js, and Vite." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23161616'/%3E%3Crect x='7' y='7' width='5' height='18' fill='%2300B8A9'/%3E%3Crect x='14' y='7' width='5' height='18' fill='%23FF5C00'/%3E%3Crect x='21' y='7' width='5' height='18' fill='%23D7263D'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,700&display=swap" rel="stylesheet" />
+  <style>
+    :root { --bg: #121212; --ink: #f2f2ef; --soft: #a3a39e; --rule: #2a2a28; --font: "Bricolage Grotesque", system-ui, sans-serif; color-scheme: dark; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 400 1.0625rem/1.55 var(--font); -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    p, h1, h2 { margin: 0; }
+    :focus-visible { outline: 3px solid var(--ink); outline-offset: 4px; }
+    .wrap { width: min(1200px, 100% - 32px); margin-inline: auto; }
+    .top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 24px 0; font-size: .9375rem; }
+    .top a { color: var(--soft); text-decoration: none; }
+    .top a:hover { color: var(--ink); }
+    .who { font-weight: 700; }
+    .intro { padding: clamp(48px, 8vw, 104px) 0 48px; max-width: 760px; }
+    h1 { font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 700; line-height: .98; letter-spacing: -.035em; font-variation-settings: "opsz" 96; text-wrap: balance; }
+    .intro p { color: var(--soft); font-size: 1.1875rem; margin-top: 20px; max-width: 56ch; }
+    .sites { display: grid; gap: 16px; padding-bottom: 72px; }
+    .site { display: grid; grid-template-columns: 1fr 1.2fr auto; gap: 24px 40px; align-items: center; padding: 32px; border-radius: 16px; text-decoration: none; border: 1px solid var(--rule); transition: transform .2s, border-color .2s; }
+    .site:hover { transform: translateY(-2px); border-color: currentColor; }
+    .site h2 { font-size: clamp(1.75rem, 3.2vw, 2.5rem); letter-spacing: -.02em; line-height: 1.05; }
+    .site .kind { font-size: .9375rem; opacity: .75; margin-bottom: 6px; }
+    .site ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; font-size: .9688rem; }
+    .site li::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: currentColor; margin-right: 10px; vertical-align: middle; opacity: .7; }
+    .go { font-weight: 500; padding: 12px 18px; border-radius: 999px; background: var(--chip); color: var(--chip-ink); white-space: nowrap; }
+    .clearline { background: #0A2540; color: #fff; --chip: #00B8A9; --chip-ink: #0A2540; }
+    .boxbolt { background: #1C1C1E; color: #fff; --chip: #FF5C00; --chip-ink: #000; border-color: #3A3A3C; }
+    .concrete { background: #EDEAE3; color: #111; --chip: #D7263D; --chip-ink: #EDEAE3; }
+    .stack { border-top: 1px solid var(--rule); padding: 40px 0 64px; display: grid; grid-template-columns: 1fr 2fr; gap: 24px 48px; }
+    .stack h2 { font-size: 1.5rem; }
+    .stack dl { margin: 0; display: grid; grid-template-columns: max-content 1fr; gap: 10px 24px; color: var(--soft); }
+    .stack dt { color: var(--ink); font-weight: 500; }
+    .stack dd { margin: 0; }
+    @media (max-width: 860px) { .site { grid-template-columns: 1fr; } .go { justify-self: start; } .stack { grid-template-columns: 1fr; } }
+    @media (max-width: 480px) { .stack dl { grid-template-columns: 1fr; gap: 2px; } .stack dd { margin-bottom: 10px; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="top">
+      <p class="who">Emiliano Dunton</p>
+      <a href="../index.html">Standard builds</a>
+    </header>
+
+    <section class="intro">
+      <h1>Premium builds: same brands, fully dynamic</h1>
+      <p>Each site is a React app with real-time 3D, multi-page routing, saved state, and motion design. Built with Vite, so it ships as static files that run on any host.</p>
+    </section>
+
+    <main class="sites">
+      <a class="site clearline" href="./clearline/index.html">
+        <div><p class="kind">Clean corporate</p><h2>Clearline Commercial Cleaning</h2></div>
+        <ul>
+          <li>3D floor plan cleaned room by room, synced to a live checklist</li>
+          <li>Four-step quote builder that remembers your answers</li>
+          <li>Client portal with audit chart, issue log, and crew roster</li>
+        </ul>
+        <span class="go">Open Clearline</span>
+      </a>
+      <a class="site boxbolt" href="./boxbolt/index.html">
+        <div><p class="kind">Rugged industrial</p><h2>BoxBolt Logistics</h2></div>
+        <ul>
+          <li>3D truck on a moving road, camera driven by scroll</li>
+          <li>Load planner: stack pallets inside the box truck in 3D</li>
+          <li>Live route tracker with ETA and delivery timeline</li>
+        </ul>
+        <span class="go">Open BoxBolt</span>
+      </a>
+      <a class="site concrete" href="./concrete-culture/index.html">
+        <div><p class="kind">Dark brutalist</p><h2>Concrete Culture</h2></div>
+        <ul>
+          <li>CC monogram poured from 3D concrete blocks that you can break</li>
+          <li>Product pages with garments hanging as live 3D cloth</li>
+          <li>Filterable shop, saved bag, drop countdown, scroll lookbook</li>
+        </ul>
+        <span class="go">Open Concrete Culture</span>
+      </a>
+    </main>
+
+    <section class="stack" aria-labelledby="stack-title">
+      <h2 id="stack-title">Under the hood</h2>
+      <dl>
+        <dt>Framework</dt><dd>React 19 with TypeScript, React Router</dd>
+        <dt>3D</dt><dd>Three.js through React Three Fiber and Drei, all models built in code</dd>
+        <dt>Motion</dt><dd>Framer Motion for page transitions, scroll-linked scenes, and layout animation</dd>
+        <dt>State</dt><dd>Zustand, persisted to the browser for quotes and the shopping bag</dd>
+        <dt>Build</dt><dd>Vite multi-page build, self-hosted fonts, deployed as static files</dd>
+      </dl>
+    </section>
+  </div>
+</body>
+</html>

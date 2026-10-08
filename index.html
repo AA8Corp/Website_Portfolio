@@ -83,6 +83,13 @@
     .approach li b { color: var(--ink); font-weight: 500; }
     @media (max-width: 860px) { .approach { grid-template-columns: 1fr; } }
 
+    .premium { padding: clamp(56px, 8vw, 104px) 0; border-top: 1px solid var(--rule); }
+    .premium > div { background: var(--ink); color: var(--bg); border-radius: 20px; padding: clamp(28px, 5vw, 56px); }
+    .premium h2 { font-size: clamp(2rem, 4.4vw, 3.5rem); font-weight: 700; letter-spacing: -.03em; line-height: 1; max-width: 18ch; }
+    .premium .kind, .premium .summary { color: #b9b9b4; }
+    .premium .summary { margin-top: 16px; max-width: 60ch; }
+    .premium .open { background: var(--bg); color: var(--ink); }
+
     footer { padding: 40px 0 56px; border-top: 1px solid var(--rule); color: var(--soft); font-size: .9375rem; }
   </style>
 </head>
@@ -94,6 +101,7 @@
         <a href="#clearline">Clearline</a>
         <a href="#boxbolt">BoxBolt</a>
         <a href="#concrete">Concrete Culture</a>
+        <a href="premium/index.html">Premium builds</a>
       </nav>
     </header>
 
@@ -195,6 +203,15 @@
         <li><b>Drop countdown</b><span>Ticks to the next Friday release in Eastern time</span></li>
         <li><b>Drawn product art</b><span>Every garment is SVG with a distressed print filter, no photos needed</span></li>
       </ul>
+    </section>
+
+    <section class="premium wrap" aria-labelledby="pr">
+      <div>
+        <p class="kind">For premium clients</p>
+        <h2 id="pr">The same three brands, rebuilt as dynamic apps</h2>
+        <p class="summary">React and Three.js versions with real-time 3D, multi-page routing, and saved state: a 3D floor plan that cleans itself, a load planner that stacks pallets inside a truck, and garments that hang as live cloth.</p>
+        <a class="open" href="premium/index.html">See the premium builds</a>
+      </div>
     </section>
 
     <section class="approach wrap" aria-labelledby="ap">

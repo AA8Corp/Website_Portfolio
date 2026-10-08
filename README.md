@@ -12,6 +12,23 @@ Three brand websites, each in a different layout style, plus a portfolio hub tha
 
 Everything is plain HTML, CSS, and JavaScript, with no build step or dependencies. Fonts load from Google Fonts.
 
+## Premium builds
+
+`premium/` holds dynamic versions of the same three brands, built with React 19, TypeScript, Three.js (React Three Fiber and Drei), Framer Motion, Zustand, and Vite.
+
+| Site | 3D centerpiece | Pages |
+| --- | --- | --- |
+| Clearline | Floor plan cleaned room by room, synced to a live checklist | Home, services, quote builder, client portal |
+| BoxBolt | Truck on a moving road with a scroll-driven camera; 3D load planner | Home, load planner, tracking |
+| Concrete Culture | CC monogram poured from concrete blocks you can break; garments as live cloth | Home, shop, product pages, drop countdown, lookbook |
+
+```sh
+cd premium
+npm install
+npm run dev      # http://localhost:5173/clearline/ (and /boxbolt/, /concrete-culture/)
+npm run build    # static output in premium/dist
+```
+
 ## Run locally
 
 ```sh
@@ -22,7 +39,7 @@ Then open http://localhost:8000. Opening `index.html` directly also works, but t
 
 ## Publish for free
 
-The site can run on any static host. On GitHub Pages: go to **Settings → Pages**, choose **Deploy from a branch**, and select `main` with the `/ (root)` folder. GitHub Pages is free for public repositories.
+`.github/workflows/pages.yml` builds the premium sites and publishes everything to GitHub Pages on each push to `main`. To turn it on, go to **Settings → Pages** and set **Source** to **GitHub Actions**. GitHub Pages and Actions are free for public repositories.
 
 ## What each site includes
 

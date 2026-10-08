@@ -1,0 +1,52 @@
+name: Deploy to GitHub Pages
+
+# Builds the premium React/Three.js sites and publishes them next to the
+# hand-coded static sites. Free for public repositories.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: premium/package-lock.json
+      - name: Build premium sites
+        working-directory: premium
+        run: |
+          npm ci
+          npm run build
+      - name: Assemble site
+        run: |
+          mkdir -p _site
+          cp index.html README.md _site/
+          cp -r assets clearline boxbolt concrete-culture _site/
+          cp -r premium/dist _site/premium
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

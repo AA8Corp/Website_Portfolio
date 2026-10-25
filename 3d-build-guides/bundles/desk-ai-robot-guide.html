@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desk AI Robot — 3D Build Guide</title>
+<style>
+/* AA8 3D Build Guide viewer — plain CSS, no framework. */
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; color: #1c1a16; background: #f2efe8; }
+#app { display: flex; flex-direction: column; height: 100vh; }
+header { display: flex; align-items: baseline; gap: 12px; padding: 12px 18px 8px; }
+header h1 { font-size: 22px; margin: 0; }
+header .sub { color: #6b655a; font-size: 14px; }
+header .spacer { flex: 1; }
+header .hint { font-size: 12px; color: #6b655a; }
+#main { display: flex; flex: 1; min-height: 0; gap: 12px; padding: 0 12px; }
+aside { width: 250px; flex-shrink: 0; background: #fff; border: 1px solid #ddd6c4; border-radius: 10px; padding: 12px; overflow-y: auto; }
+aside.closed { display: none; }
+aside h2 { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: #6b655a; margin: 14px 0 6px; }
+aside h2:first-child { margin-top: 0; }
+aside ul { list-style: none; margin: 0; padding: 0; }
+aside li { display: flex; align-items: center; gap: 8px; padding: 6px 4px; border-bottom: 1px solid #f0ece1; font-size: 14px; }
+aside li.done { color: #3d7a3d; }
+aside li.done .pname::after { content: " ✓"; }
+aside li.now { background: #fff6d6; border-radius: 6px; }
+.swatch { width: 14px; height: 14px; border-radius: 3px; border: 1px solid #0003; flex-shrink: 0; }
+.pname { flex: 1; }
+.qty { color: #6b655a; font-size: 13px; }
+#total-count { font-size: 13px; color: #6b655a; }
+#viewport { flex: 1; position: relative; border: 1px solid #ddd6c4; border-radius: 10px; overflow: hidden; background: #f2efe8; min-width: 0; }
+#viewport canvas { display: block; }
+#step-card { position: absolute; left: 12px; bottom: 12px; max-width: 480px; background: #fffffff2; border: 1px solid #ddd6c4; border-radius: 10px; padding: 12px 14px; box-shadow: 0 4px 18px #0002; }
+#step-count { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: #6b655a; }
+#step-title { margin: 2px 0 4px; font-size: 18px; }
+#step-text { margin: 0; font-size: 14px; line-height: 1.5; }
+#step-tip { margin: 8px 0 0; font-size: 13px; background: #fff6d6; border-radius: 6px; padding: 6px 8px; }
+#step-hardware { margin: 8px 0 0; font-size: 13px; color: #4a4438; }
+#manual-ref { margin: 8px 0 0; font-size: 12px; color: #8a8378; }
+#controls-bar { display: flex; align-items: center; gap: 8px; padding: 10px 12px 14px; flex-wrap: wrap; }
+button { font: inherit; font-size: 14px; padding: 8px 14px; border-radius: 8px; border: 1px solid #c9c2ae; background: #fff; cursor: pointer; }
+button:hover { background: #f6f2e6; }
+button:disabled { opacity: 0.4; cursor: default; }
+button.on { background: #1c1a16; color: #fff; border-color: #1c1a16; }
+#step-dots { display: flex; gap: 4px; margin: 0 6px; }
+.step-dot { width: 30px; height: 30px; padding: 0; border-radius: 50%; font-size: 13px; }
+.step-dot.done { background: #dfe9d8; }
+.step-dot.active { background: #1c1a16; color: #fff; border-color: #1c1a16; }
+#explode-range { width: 110px; accent-color: #1c1a16; }
+footer { padding: 0 18px 12px; font-size: 12px; color: #8a8378; }
+@media (max-width: 760px) {
+  aside { position: absolute; z-index: 5; left: 12px; top: 70px; bottom: 120px; box-shadow: 0 8px 30px #0003; }
+  #step-card { left: 8px; right: 8px; bottom: 8px; max-width: none; }
+}
+
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1 id="build-title">Desk AI Robot</h1>
+    <span class="sub" id="build-sub"></span>
+    <span class="spacer"></span>
+    <span class="hint">Drag to orbit · Scroll to zoom · Space for next step</span>
+  </header>
+  <div id="main">
+    <aside id="parts-panel">
+      <h2>What is in the box</h2>
+      <div id="total-count"></div>
+      <ul id="parts-list"></ul>
+      <h2>Hardware</h2>
+      <ul id="hardware-list"></ul>
+    </aside>
+    <div id="viewport">
+      <div id="step-card">
+        <div id="step-count">Step 0</div>
+        <h2 id="step-title">Loading…</h2>
+        <p id="step-text"></p>
+        <p id="step-tip" style="display:none"></p>
+        <p id="step-hardware"></p>
+        <p id="manual-ref"></p>
+      </div>
+    </div>
+  </div>
+  <div id="controls-bar">
+    <button id="prev-btn">← Prev</button>
+    <button id="next-btn">Next →</button>
+    <div id="step-dots"></div>
+    <button id="explode-btn" title="Shift+X">Explode ⇧X</button>
+    <input id="explode-range" type="range" min="0" max="100" value="0" title="Explode amount">
+    <button id="drawing-btn" title="Shift+V">Drawing ⇧V</button>
+    <button id="parts-btn" title="Shift+K">Parts ⇧K</button>
+  </div>
+  <footer>The 3D guide shows the order and the fit. The paper manual, the wiring table, and the real measurements stay the authority. Check every connection against them before powering anything.</footer>
+</div>
+<script>
+window.__EMBEDDED_BUILD__ = {"hardware": [{"name": "Jumper wire", "qty": 12}, {"name": "USB-C cable, data", "qty": 1}, {"name": "XIAO ESP32-S3 Sense", "qty": 1}, {"name": "OLED 0.96 in SSD1306", "qty": 1}, {"name": "INMP441 mic module", "qty": 1}, {"name": "MAX98357A amp board", "qty": 1}, {"name": "Speaker, 36 mm 8 ohm", "qty": 1}, {"name": "Half-size breadboard", "qty": 1}], "manualRef": "Paper authority: desk-ai-robot/demo-build/README-DEMO.md (wiring table, flash steps, test checklist). Pin map below is copied from that file, not invented here.", "model": "models/desk-ai-robot.glb", "parts": [{"color": "#f5f2ea", "explode": [0, -0.6, 0], "firstStep": 1, "id": "breadboard", "metalness": 0.0, "name": "Half-size breadboard", "notes": "Rails along the long edges. Everything seats here. No case in Demo Build 1, you need to see the wiring.", "position": [0, 0.5, 0], "qty": 1, "roughness": 0.7, "shape": {"size": [8.5, 1.0, 5.5], "type": "box"}}, {"color": "#14202e", "detail": {"color": "#050505", "offset": [0, 0.22, -0.35], "shape": {"size": [0.9, 0.15, 0.9], "type": "box"}}, "explode": [0, 2.2, 0], "firstStep": 2, "id": "xiao", "metalness": 0.4, "name": "XIAO ESP32-S3 Sense", "notes": "21 x 17.5 mm. Camera board is on the back and stays plugged in, pointing forward at the student. USB-C port faces left.", "position": [-2.2, 1.15, -0.8], "qty": 1, "roughness": 0.4, "shape": {"size": [2.1, 0.3, 1.75], "type": "box"}}, {"color": "#111111", "detail": {"color": "#bfe3ff", "offset": [0, 0.25, 0], "shape": {"size": [2.2, 0.08, 2.2], "type": "box"}}, "explode": [1.5, 2.2, 0], "firstStep": 3, "id": "oled", "metalness": 0.1, "name": "OLED 0.96 in SSD1306", "notes": "I2C address 0x3C. SDA to D4, SCL to D5, VCC to 3V3, GND to GND. This is the face: mouth moves when it speaks.", "position": [2.2, 1.2, -1.2], "qty": 1, "roughness": 0.35, "shape": {"size": [2.7, 0.4, 2.7], "type": "box"}}, {"color": "#2e6f4e", "explode": [1.5, 2.2, 0], "firstStep": 4, "id": "mic", "metalness": 0.2, "name": "INMP441 mic module", "notes": "Qoroos 5-pack board, round. VDD 3V3 ONLY, never 5V. L/R pin to GND for left channel. SCK to D0, WS to D1, SD to D3.", "position": [2.2, 1.15, 1.4], "qty": 1, "roughness": 0.5, "shape": {"height": 0.25, "radius": 0.9, "type": "cylinder"}}, {"color": "#4a3d8f", "explode": [-1.5, 2.2, 0], "firstStep": 5, "id": "amp", "metalness": 0.3, "name": "MAX98357A amp board", "notes": "I2S amp, not a plain speaker. BCLK to D0, WS to D1, DIN to D2 (move to D6 if the board will not boot). VIN 5V first, 3V3 if it buzzes.", "position": [-2.2, 1.15, 1.5], "qty": 1, "roughness": 0.45, "shape": {"size": [2.5, 0.3, 1.8], "type": "box"}}, {"color": "#1a1a1a", "detail": {"color": "#555555", "offset": [0, 0.28, 0], "shape": {"height": 0.12, "radius": 1.2, "type": "cylinder"}}, "explode": [2.5, 0, 0.5], "firstStep": 6, "id": "speaker", "metalness": 0.1, "name": "Speaker, 36 mm 8 ohm 2 W", "notes": "Adafruit 36 mm, product 6486. Wires to the amp output + and -. Do not power the speaker from the XIAO 3V3 pin alone.", "position": [6.2, 0.25, 0.8], "qty": 1, "roughness": 0.6, "shape": {"height": 0.5, "radius": 1.8, "type": "cylinder"}}, {"color": "#222222", "explode": [-3, 0, 0], "firstStep": 8, "id": "usb", "metalness": 0.1, "name": "USB-C cable", "notes": "Must carry data, not charge-only. Charge-only cables are the most common failure. If the board does not show as a USB port, try another cable first.", "position": [-4.9, 1.15, -0.8], "qty": 1, "roughness": 0.6, "shape": {"size": [3.0, 0.35, 0.7], "type": "box"}}], "steps": [{"add": [], "camera": {"pos": [11, 9, 13], "target": [0, 0.5, 0.5]}, "highlight": [], "manualRef": "Step 0 of 9 \u00b7 Demo Build 1", "text": "One XIAO Sense, one OLED, one INMP441 mic, one MAX98357A amp, one 36 mm speaker, one breadboard, 12 jumper wires, one USB-C cable. No button, no case, no microSD in this build. Count everything before you start.", "title": "What is in the box"}, {"add": ["breadboard"], "camera": {"pos": [10, 9, 12], "target": [0, 0.5, 0]}, "highlight": ["breadboard"], "manualRef": "Step 1 of 9", "text": "Breadboard in the middle of the table. This is the whole chassis for Demo Build 1. Nothing is enclosed yet, you need to see the wiring and feel the heat.", "title": "Place the breadboard"}, {"add": ["xiao"], "camera": {"pos": [-7, 5, 6], "target": [-2.2, 1, -0.8]}, "highlight": ["xiao"], "manualRef": "Step 2 of 9", "text": "Seat the XIAO near the left of the breadboard, USB-C port facing left, camera pointing forward at the student. The camera came with the Sense kit, it stays plugged in. It runs warm, leave airflow.", "title": "Seat the XIAO"}, {"add": ["oled"], "camera": {"pos": [6, 5, 4], "target": [2.2, 1, -1.2]}, "hardware": ["SDA D4, blue", "SCL D5, yellow", "VCC 3V3, red", "GND, black"], "highlight": ["oled"], "manualRef": "Step 3 of 9 \u00b7 Wiring table", "text": "OLED top right. SDA to D4 (blue), SCL to D5 (yellow), VCC to 3V3 (red), GND to GND (black). Address 0x3C. If the face is blank on power-up, check D4 and D5 first.", "tip": "3V3 only for the OLED. Do not put it on 5V.", "title": "Add the OLED face"}, {"add": ["mic"], "camera": {"pos": [6, 5, 6], "target": [2.2, 1, 1.4]}, "hardware": ["SCK D0, yellow", "WS D1, green", "SD D3, white", "VDD 3V3, red", "L/R to GND"], "highlight": ["mic"], "manualRef": "Step 4 of 9 \u00b7 Wiring table", "text": "Mic bottom right. SCK to D0 (yellow), WS to D1 (green), SD to D3 (white), VDD to 3V3 (red), GND to GND (black), L/R pin to GND for left channel. Ignore the generic ESP32 GPIO numbers in the Amazon listing.", "tip": "VDD is 1.8 to 3.3 V only. 5V will kill this mic.", "title": "Add the INMP441 mic"}, {"add": ["amp"], "camera": {"pos": [-7, 5, 6], "target": [-2.2, 1, 1.5]}, "hardware": ["BCLK D0, yellow", "WS D1, green", "DIN D2, blue", "VIN 5V, red", "GND, black"], "highlight": ["amp"], "manualRef": "Step 5 of 9 \u00b7 Wiring table", "text": "Amp bottom left. BCLK to D0 (yellow, shared with the mic), WS to D1 (green, shared), DIN to D2 (blue). If the board will not boot, move DIN to D6. VIN to 5V first, 3V3 if it buzzes.", "title": "Add the MAX98357A amp"}, {"add": ["speaker"], "camera": {"pos": [11, 4, 6], "target": [6.2, 0.5, 0.8]}, "hardware": ["Speaker + to amp +", "Speaker - to amp -"], "highlight": ["speaker"], "manualRef": "Step 6 of 9", "text": "Speaker sits beside the board, not on it. Speaker + to amp output +, speaker - to amp output -. Keep the mic and the speaker at opposite ends of the breadboard, mic facing the user.", "tip": "This is the anti-echo layout. Moderate volume, mic and speaker apart, or the robot hears itself and starts a false turn.", "title": "Connect the speaker"}, {"add": [], "camera": {"pos": [10, 10, 12], "target": [0, 0.5, 0.5]}, "highlight": ["xiao", "oled", "mic", "amp"], "manualRef": "Step 7 of 9 \u00b7 Wiring table", "text": "Power check before USB. Mic and OLED on 3V3. Amp on 5V. Every board has a black GND wire back to the XIAO. One loose GND is the most common dead-board symptom in the lab.", "tip": "Read the whole wiring table once more. The 3D guide shows where things go, the table says which pin is which.", "title": "Wire power and ground"}, {"add": ["usb"], "camera": {"pos": [-8, 6, 8], "target": [-3, 1, -0.8]}, "hardware": ["USB-C cable", "desk_robot_demo.ino"], "highlight": ["usb", "xiao"], "manualRef": "Step 8 of 9 \u00b7 Flash steps", "text": "Plug in USB-C. Arduino IDE, board XIAO_ESP32S3, PSRAM OPI, USB CDC On Boot enabled. Copy secrets.h.example to secrets.h, fill in Wi-Fi, server IP, token team-01-blue. Upload desk_robot_demo.ino.", "tip": "Board not showing as a USB port means the cable, almost every time. Swap the cable before you reinstall anything.", "title": "Plug in USB-C and flash"}, {"add": [], "camera": {"pos": [11, 9, 13], "target": [0, 0.5, 0.5]}, "highlight": ["oled", "mic", "speaker"], "manualRef": "Step 9 of 9 \u00b7 Test checklist", "text": "Power on. OLED shows a crossed-out face, then the idle face after Wi-Fi connects. Talk for 2 to 3 seconds, stop, wait for the reply, usually 5 to 15 seconds. Run it three times. One success is luck, three is a demo.", "tip": "Half-duplex: the mic is off while it speaks. Wait for the idle face, then talk. You cannot interrupt mid-reply in this build.", "title": "First voice test"}], "subtitle": "Demo Build 1 \u00b7 XIAO ESP32-S3 Sense \u00b7 auto-listen, no button \u00b7 2 units, 1 week", "title": "Desk AI Robot", "wires": [{"color": "#3a6fd8", "from": [-1.4, 1.35, -0.8], "sag": 0.7, "step": 3, "to": [1.2, 1.45, -1.2]}, {"color": "#e8c832", "from": [-1.4, 1.35, -0.5], "sag": 0.7, "step": 3, "to": [1.2, 1.45, -0.9]}, {"color": "#d21f1f", "from": [-1.4, 1.35, -1.1], "sag": 0.9, "step": 3, "to": [1.2, 1.45, -1.5]}, {"color": "#222222", "from": [-1.4, 1.35, -1.4], "sag": 0.9, "step": 3, "to": [1.2, 1.45, -1.7]}, {"color": "#e8c832", "from": [-1.2, 1.35, -0.8], "sag": 0.7, "step": 4, "to": [1.6, 1.35, 1.0]}, {"color": "#2e8f5b", "from": [-1.2, 1.35, -0.5], "sag": 0.7, "step": 4, "to": [1.6, 1.35, 1.3]}, {"color": "#f5f2ea", "from": [-1.2, 1.35, -0.2], "sag": 0.7, "step": 4, "to": [1.6, 1.35, 1.6]}, {"color": "#d21f1f", "from": [-1.2, 1.35, -1.1], "sag": 1.0, "step": 4, "to": [1.6, 1.35, 0.7]}, {"color": "#222222", "from": [-1.2, 1.35, -1.4], "sag": 1.0, "step": 4, "to": [1.6, 1.35, 1.9]}, {"color": "#e8c832", "from": [-1.6, 1.35, 0.0], "sag": 0.5, "step": 5, "to": [-2.2, 1.35, 0.8]}, {"color": "#2e8f5b", "from": [-1.6, 1.35, 0.3], "sag": 0.5, "step": 5, "to": [-2.2, 1.35, 1.1]}, {"color": "#3a6fd8", "from": [-1.6, 1.35, 0.6], "sag": 0.5, "step": 5, "to": [-2.2, 1.35, 1.4]}, {"color": "#d21f1f", "from": [-1.6, 1.35, -0.3], "sag": 0.6, "step": 5, "to": [-2.2, 1.35, 1.9]}, {"color": "#222222", "from": [-1.6, 1.35, -0.6], "sag": 0.6, "step": 5, "to": [-2.2, 1.35, 2.1]}, {"color": "#d21f1f", "from": [-1.0, 1.35, 1.5], "sag": 0.6, "step": 6, "to": [4.6, 0.6, 0.8]}, {"color": "#222222", "from": [-1.0, 1.35, 1.9], "sag": 0.6, "step": 6, "to": [4.6, 0.6, 1.2]}]};
+const __origFetch = window.fetch.bind(window);
+window.fetch = function(url) {
+  if (String(url).endsWith('build.json')) {
+    return Promise.resolve(new Response(JSON.stringify(window.__EMBEDDED_BUILD__), {headers: {'Content-Type': 'application/json'}}));
+  }
+  return __origFetch.apply(window, arguments);
+};
+</script>
+<script type="module">
+// AA8 3D Build Guide viewer — the reusable Flat Pack pattern.
+// One viewer, any build. All build-specific data lives in build.json:
+//   parts, hardware, steps, camera presets, explode directions, wires.
+// No build logic is hardcoded here. To add a new build, copy the
+// template folder, edit build.json, and (optionally) drop a GLB in
+// models/ with node names matching the part ids.
+//
+// Stack: Three.js (WebGL) via CDN import map + OrbitControls.
+// No build step, no server needed for the procedural path. Open
+// index.html over http (python3 -m http.server) so fetch() can load
+// build.json. Opening with file:// blocks fetch in most browsers.
+//
+// Keyboard, matching Flat Pack: Space next step, 0-9 jump to a step,
+// Shift+X exploded view, Shift+V Drawing view, Shift+K parts list.
+
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const BUILD_URL = new URLSearchParams(location.search).get('build') || 'build.json';
+
+const state = {
+  build: null,
+  step: 0,
+  explodeTarget: 0,
+  explodeNow: 0,
+  drawing: false,
+  partsListOpen: true,
+  camTween: null,
+};
+
+let renderer, scene, perspCam, orthoCam, activeCam, controls;
+let partObjects = new Map(); // id -> THREE.Group
+let wireObjects = [];        // {mesh, step}
+let edgeLines = [];
+let origMaterials = new Map();
+const drawingMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+const drawingEdgeMat = new THREE.LineBasicMaterial({ color: 0x111111 });
+
+const $ = (id) => document.getElementById(id);
+
+async function loadBuild() {
+  const res = await fetch(BUILD_URL);
+  if (!res.ok) throw new Error('Could not load ' + BUILD_URL + ' (' + res.status + ')');
+  return res.json();
+}
+
+function init(build) {
+  document.title = build.title + ' — 3D Build Guide';
+  $('build-title').textContent = build.title;
+  $('build-sub').textContent = build.subtitle || '';
+
+  const container = $('viewport');
+  renderer = new THREE.WebGLRenderer({ antialias: true });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+
+  scene = new THREE.Scene();
+  scene.background = new THREE.Color(0xf2efe8); // warm paper, like a manual page
+
+  perspCam = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 200);
+  orthoCam = new THREE.OrthographicCamera(-8, 8, 6, -6, 0.1, 200);
+  activeCam = perspCam;
+
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x8a8378, 0.9);
+  scene.add(hemi);
+  const dir = new THREE.DirectionalLight(0xffffff, 1.6);
+  dir.position.set(6, 10, 4);
+  dir.castShadow = true;
+  dir.shadow.mapSize.set(2048, 2048);
+  scene.add(dir);
+
+  const ground = new THREE.Mesh(
+    new THREE.PlaneGeometry(60, 60),
+    new THREE.ShadowMaterial({ opacity: 0.18 })
+  );
+  ground.rotation.x = -Math.PI / 2;
+  ground.receiveShadow = true;
+  scene.add(ground);
+  const grid = new THREE.GridHelper(30, 30, 0xcccccc, 0xe0ddd2);
+  grid.position.y = 0.001;
+  scene.add(grid);
+
+  controls = new OrbitControls(activeCam, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.minDistance = 3;
+  controls.maxDistance = 40;
+
+  buildParts(build);
+  buildWires(build);
+  tryLoadGLB(build); // upgrades procedural parts to GLB nodes when present
+  buildPartsList(build);
+  buildStepDots(build);
+  wireUI(build);
+  applyStep(0, false);
+  setExplode(0);
+
+  addEventListener('resize', () => {
+    const w = container.clientWidth, h = container.clientHeight;
+    renderer.setSize(w, h);
+    perspCam.aspect = w / h;
+    perspCam.updateProjectionMatrix();
+    fitOrtho(w, h);
+  });
+  fitOrtho(container.clientWidth, container.clientHeight);
+  renderer.setAnimationLoop(tick);
+}
+
+function fitOrtho(w, h) {
+  const s = 9;
+  orthoCam.left = -s * (w / h);
+  orthoCam.right = s * (w / h);
+  orthoCam.top = s;
+  orthoCam.bottom = -s;
+  orthoCam.updateProjectionMatrix();
+}
+
+// ---- parts: procedural primitives driven by build.json -----------------
+function partMesh(part) {
+  const s = part.shape || {};
+  const mat = new THREE.MeshStandardMaterial({
+    color: new THREE.Color(part.color || '#888888'),
+    roughness: part.roughness ?? 0.55,
+    metalness: part.metalness ?? 0.15,
+  });
+  let geo;
+  if (s.type === 'cylinder') {
+    geo = new THREE.CylinderGeometry(s.radiusTop ?? s.radius ?? 1, s.radiusBottom ?? s.radius ?? 1, s.height ?? 1, s.segments ?? 32);
+  } else if (s.type === 'sphere') {
+    geo = new THREE.SphereGeometry(s.radius ?? 1, 32, 24);
+  } else { // box
+    geo = new THREE.BoxGeometry(s.size?.[0] ?? 1, s.size?.[1] ?? 0.2, s.size?.[2] ?? 1);
+  }
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.castShadow = true;
+  mesh.receiveShadow = true;
+  if (s.rotation) mesh.rotation.set(s.rotation[0], s.rotation[1], s.rotation[2]);
+  return mesh;
+}
+
+function buildParts(build) {
+  for (const part of build.parts) {
+    const group = new THREE.Group();
+    group.name = part.id;
+    group.position.set(...(part.position || [0, 0, 0]));
+    group.userData.basePos = new THREE.Vector3(...(part.position || [0, 0, 0]));
+    group.userData.explode = new THREE.Vector3(...(part.explode || [0, 0, 0]));
+    group.userData.firstStep = part.firstStep ?? 0;
+    group.userData.part = part;
+
+    const mesh = partMesh(part);
+    group.add(mesh);
+    // Optional second mesh: a screen, lens, or top detail.
+    if (part.detail) {
+      const d = partMesh({ ...part.detail, color: part.detail.color });
+      d.position.set(...(part.detail.offset || [0, 0, 0]));
+      group.add(d);
+    }
+    const edges = new THREE.LineSegments(
+      new THREE.EdgesGeometry(mesh.geometry, 35),
+      new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.18 })
+    );
+    if (part.shape?.rotation) edges.rotation.set(...part.shape.rotation);
+    group.add(edges);
+    edgeLines.push(edges);
+
+    scene.add(group);
+    partObjects.set(part.id, group);
+  }
+}
+
+function buildWires(build) {
+  for (const w of build.wires || []) {
+    const a = new THREE.Vector3(...w.from);
+    const b = new THREE.Vector3(...w.to);
+    const mid = a.clone().lerp(b, 0.5);
+    mid.y += w.sag ?? 0.9; // arc up so wires read as loose jumpers, not rods
+    const curve = new THREE.CatmullRomCurve3([a, mid, b]);
+    const mesh = new THREE.Mesh(
+      new THREE.TubeGeometry(curve, 24, w.radius ?? 0.07, 8),
+      new THREE.MeshStandardMaterial({ color: new THREE.Color(w.color || '#ff0000'), roughness: 0.6 })
+    );
+    mesh.castShadow = true;
+    mesh.userData.step = w.step ?? 0;
+    mesh.visible = false;
+    scene.add(mesh);
+    wireObjects.push(mesh);
+  }
+}
+
+// If a GLB exists with nodes named after part ids, swap the procedural
+// mesh for the real model. Failure is silent: procedural stays.
+function tryLoadGLB(build) {
+  if (!build.model) return;
+  new GLTFLoader().load(build.model, (gltf) => {
+    gltf.scene.traverse((node) => {
+      if (!node.isMesh || !partObjects.has(node.name)) return;
+      const group = partObjects.get(node.name);
+      // Keep position/explode metadata, replace the drawn mesh.
+      [...group.children].forEach((c) => { if (c.isMesh) group.remove(c); });
+      node.castShadow = true;
+      node.receiveShadow = true;
+      node.position.set(0, 0, 0);
+      group.add(node);
+    });
+  }, undefined, () => { /* no GLB yet: procedural model stands */ });
+}
+
+// ---- steps ---------------------------------------------------------------
+function visiblePartsAt(stepIndex) {
+  const step = state.build.steps[stepIndex];
+  const shown = new Set();
+  for (let i = 0; i <= stepIndex; i++) {
+    for (const id of state.build.steps[i].add || []) shown.add(id);
+  }
+  return { shown, highlight: new Set(step.highlight || step.add || []) };
+}
+
+function applyStep(i, animate = true) {
+  const build = state.build;
+  state.step = Math.max(0, Math.min(build.steps.length - 1, i));
+  const step = build.steps[state.step];
+  const { shown, highlight } = visiblePartsAt(state.step);
+
+  for (const [id, group] of partObjects) {
+    group.visible = shown.has(id);
+    group.traverse((c) => {
+      if (c.isMesh && c.material && c.material.emissive) {
+        c.material.emissive = new THREE.Color(highlight.has(id) ? 0x332200 : 0x000000);
+        c.material.emissiveIntensity = highlight.has(id) ? 0.55 : 0;
+      }
+    });
+  }
+  for (const w of wireObjects) w.visible = (w.userData.step ?? 0) <= state.step;
+
+  // Step text panel
+  $('step-count').textContent = 'Step ' + state.step + ' of ' + (build.steps.length - 1);
+  $('step-title').textContent = step.title;
+  $('step-text').textContent = step.text || '';
+  $('step-tip').textContent = step.tip ? 'Tip: ' + step.tip : '';
+  $('step-tip').style.display = step.tip ? 'block' : 'none';
+  $('manual-ref').textContent = step.manualRef || build.manualRef || '';
+  const hw = step.hardware || [];
+  $('step-hardware').innerHTML = hw.length
+    ? '<strong>Uses this step:</strong> ' + hw.map((h) => escapeHtml(h)).join(' · ')
+    : '';
+
+  // Parts list checkmarks
+  document.querySelectorAll('#parts-list li').forEach((li) => {
+    li.classList.toggle('done', shown.has(li.dataset.part));
+    li.classList.toggle('now', highlight.has(li.dataset.part));
+  });
+  document.querySelectorAll('.step-dot').forEach((d, idx) => {
+    d.classList.toggle('active', idx === state.step);
+    d.classList.toggle('done', idx < state.step);
+  });
+  $('prev-btn').disabled = state.step === 0;
+  $('next-btn').disabled = state.step === build.steps.length - 1;
+  $('explode-btn').classList.toggle('on', state.explodeTarget > 0);
+
+  // Camera: each step starts at its fixed preset angle, then the
+  // user is free to orbit. That is the Flat Pack contract.
+  if (step.camera) flyTo(step.camera.pos, step.camera.target, animate);
+}
+
+function flyTo(pos, target, animate = true) {
+  const toPos = new THREE.Vector3(...pos);
+  const toTarget = new THREE.Vector3(...target);
+  if (!animate) {
+    activeCam.position.copy(toPos);
+    controls.target.copy(toTarget);
+    controls.update();
+    return;
+  }
+  state.camTween = {
+    fromPos: activeCam.position.clone(), toPos,
+    fromTarget: controls.target.clone(), toTarget,
+    t: 0,
+  };
+}
+
+function setExplode(v) {
+  state.explodeTarget = v;
+  $('explode-btn').classList.toggle('on', v > 0);
+  $('explode-range').value = String(Math.round(v * 100));
+}
+
+function setDrawing(on) {
+  state.drawing = on;
+  const from = activeCam;
+  activeCam = on ? orthoCam : perspCam;
+  activeCam.position.copy(from.position);
+  controls.object = activeCam;
+  fitOrtho($('viewport').clientWidth, $('viewport').clientHeight);
+  controls.update();
+  scene.background = new THREE.Color(on ? 0xffffff : 0xf2efe8);
+  for (const [id, group] of partObjects) {
+    group.traverse((c) => {
+      if (!c.isMesh) return;
+      if (on) {
+        if (!origMaterials.has(c)) origMaterials.set(c, c.material);
+        c.material = drawingMat;
+      } else if (origMaterials.has(c)) {
+        c.material = origMaterials.get(c);
+      }
+    });
+  }
+  for (const e of edgeLines) {
+    e.material = on ? drawingEdgeMat : new THREE.LineBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.18 });
+  }
+  $('drawing-btn').classList.toggle('on', on);
+}
+
+// ---- UI ------------------------------------------------------------------
+function buildPartsList(build) {
+  const ul = $('parts-list');
+  ul.innerHTML = '';
+  for (const part of build.parts) {
+    const li = document.createElement('li');
+    li.dataset.part = part.id;
+    li.innerHTML = '<span class="swatch" style="background:' + escapeHtml(part.color || '#888') + '"></span>'
+      + '<span class="pname">' + escapeHtml(part.name) + '</span>'
+      + '<span class="qty">×' + (part.qty || 1) + '</span>';
+    li.title = part.notes || '';
+    ul.appendChild(li);
+  }
+  const hw = $('hardware-list');
+  hw.innerHTML = (build.hardware || []).map((h) =>
+    '<li><span class="pname">' + escapeHtml(h.name) + '</span><span class="qty">×' + (h.qty || 1) + '</span></li>'
+  ).join('');
+  $('total-count').textContent = build.parts.length + ' parts · ' + (build.hardware || []).reduce((a, h) => a + (h.qty || 1), 0) + ' hardware pieces';
+}
+
+function buildStepDots(build) {
+  const wrap = $('step-dots');
+  wrap.innerHTML = '';
+  build.steps.forEach((s, i) => {
+    const b = document.createElement('button');
+    b.className = 'step-dot';
+    b.textContent = String(i);
+    b.title = s.title;
+    b.addEventListener('click', () => applyStep(i));
+    wrap.appendChild(b);
+  });
+}
+
+function wireUI(build) {
+  $('prev-btn').addEventListener('click', () => applyStep(state.step - 1));
+  $('next-btn').addEventListener('click', () => applyStep(state.step + 1));
+  $('explode-btn').addEventListener('click', () => setExplode(state.explodeTarget > 0 ? 0 : 1));
+  $('explode-range').addEventListener('input', (e) => setExplode(Number(e.target.value) / 100));
+  $('drawing-btn').addEventListener('click', () => setDrawing(!state.drawing));
+  $('parts-btn').addEventListener('click', () => {
+    state.partsListOpen = !state.partsListOpen;
+    $('parts-panel').classList.toggle('closed', !state.partsListOpen);
+  });
+  addEventListener('keydown', (e) => {
+    if (e.key === ' ') { e.preventDefault(); applyStep(state.step + 1); }
+    else if (e.key === 'ArrowRight') applyStep(state.step + 1);
+    else if (e.key === 'ArrowLeft') applyStep(state.step - 1);
+    else if (/^[0-9]$/.test(e.key)) applyStep(Number(e.key));
+    else if (e.shiftKey && (e.key === 'X' || e.key === 'x')) setExplode(state.explodeTarget > 0 ? 0 : 1);
+    else if (e.shiftKey && (e.key === 'V' || e.key === 'v')) setDrawing(!state.drawing);
+    else if (e.shiftKey && (e.key === 'K' || e.key === 'k')) $('parts-btn').click();
+  });
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+// ---- frame loop ------------------------------------------------------------
+function tick() {
+  const dt = 0.016;
+  if (state.camTween) {
+    const tw = state.camTween;
+    tw.t += dt / 0.9;
+    const k = tw.t >= 1 ? 1 : 1 - Math.pow(1 - tw.t, 3);
+    activeCam.position.lerpVectors(tw.fromPos, tw.toPos, k);
+    controls.target.lerpVectors(tw.fromTarget, tw.toTarget, k);
+    if (tw.t >= 1) state.camTween = null;
+  }
+  // Exploded view eases toward its target.
+  state.explodeNow += (state.explodeTarget - state.explodeNow) * 0.12;
+  if (Math.abs(state.explodeTarget - state.explodeNow) < 0.001) state.explodeNow = state.explodeTarget;
+  for (const [, group] of partObjects) {
+    const e = group.userData.explode;
+    group.position.copy(group.userData.basePos).addScaledVector(e, state.explodeNow);
+  }
+  controls.update();
+  renderer.render(scene, activeCam);
+}
+
+loadBuild()
+  .then((build) => { state.build = build; init(build); })
+  .catch((err) => {
+    $('step-title').textContent = 'Could not load this build';
+    $('step-text').textContent = String(err.message || err) + ' — serve the folder over http (python3 -m http.server) and reload.';
+  });
+
+</script>
+</body>
+</html>

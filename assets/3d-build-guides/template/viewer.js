@@ -16,6 +16,8 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 
 const BUILD_URL = new URLSearchParams(location.search).get('build') || 'build.json';
 
@@ -56,18 +58,28 @@ function init(build) {
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  // Filmic look, from the motion-graphic skill's LOOK block (AgX filmic
+  // in Blender; ACES filmic is the closest real-time equivalent here).
+  // It keeps part colors reading as their hex instead of blowing out.
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.05;
   container.appendChild(renderer.domElement);
 
   scene = new THREE.Scene();
   scene.background = new THREE.Color(0xf2efe8); // warm paper, like a manual page
+  // Image-based lighting: a virtual studio room bounced into every
+  // material, so plastic and metal read as real instead of flat.
+  // No external HDR file needed; RoomEnvironment is built into Three.js.
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
   perspCam = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 200);
   orthoCam = new THREE.OrthographicCamera(-8, 8, 6, -6, 0.1, 200);
   activeCam = perspCam;
 
-  const hemi = new THREE.HemisphereLight(0xffffff, 0x8a8378, 0.9);
+  const hemi = new THREE.HemisphereLight(0xffffff, 0x8a8378, 0.45);
   scene.add(hemi);
-  const dir = new THREE.DirectionalLight(0xffffff, 1.6);
+  const dir = new THREE.DirectionalLight(0xffffff, 1.25);
   dir.position.set(6, 10, 4);
   dir.castShadow = true;
   dir.shadow.mapSize.set(2048, 2048);
@@ -122,18 +134,34 @@ function fitOrtho(w, h) {
 // ---- parts: procedural primitives driven by build.json -----------------
 function partMesh(part) {
   const s = part.shape || {};
-  const mat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(part.color || '#888888'),
-    roughness: part.roughness ?? 0.55,
-    metalness: part.metalness ?? 0.15,
-  });
+  // Glassy parts (OLED screen) get a clearcoat physical material:
+  // a hard shiny top layer over the color, like glass over a display.
+  // Everything else is standard PBR with a capped environment
+  // reflection, so colors stay true and nothing blows out.
+  const mat = (part.clearcoat || s.clearcoat)
+    ? new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(part.color || '#888888'),
+        roughness: 0.08, metalness: 0.0,
+        clearcoat: 1.0, clearcoatRoughness: 0.08,
+        envMapIntensity: 1.0,
+      })
+    : new THREE.MeshStandardMaterial({
+        color: new THREE.Color(part.color || '#888888'),
+        roughness: part.roughness ?? 0.6,
+        metalness: part.metalness ?? 0.15,
+        envMapIntensity: 0.55,
+      });
   let geo;
   if (s.type === 'cylinder') {
     geo = new THREE.CylinderGeometry(s.radiusTop ?? s.radius ?? 1, s.radiusBottom ?? s.radius ?? 1, s.height ?? 1, s.segments ?? 32);
   } else if (s.type === 'sphere') {
     geo = new THREE.SphereGeometry(s.radius ?? 1, 32, 24);
-  } else { // box
-    geo = new THREE.BoxGeometry(s.size?.[0] ?? 1, s.size?.[1] ?? 0.2, s.size?.[2] ?? 1);
+  } else { // box with a soft rounded bevel, like a molded part.
+    // The motion-graphic skill's hero spec is "rounded bevels" for a
+    // reason: a sharp CG box reads as fake before anything else does.
+    const w = s.size?.[0] ?? 1, h = s.size?.[1] ?? 0.2, d = s.size?.[2] ?? 1;
+    const r = Math.min(0.09, Math.min(w, h, d) * 0.3);
+    geo = new RoundedBoxGeometry(w, h, d, 3, r);
   }
   const mesh = new THREE.Mesh(geo, mat);
   mesh.castShadow = true;

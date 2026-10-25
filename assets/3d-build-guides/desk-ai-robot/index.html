@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desk AI Robot — 3D Build Guide</title>
+<link rel="stylesheet" href="../template/viewer.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1 id="build-title">Desk AI Robot</h1>
+    <span class="sub" id="build-sub"></span>
+    <span class="spacer"></span>
+    <span class="hint">Drag to orbit · Scroll to zoom · Space for next step</span>
+  </header>
+  <div id="main">
+    <aside id="parts-panel">
+      <h2>What is in the box</h2>
+      <div id="total-count"></div>
+      <ul id="parts-list"></ul>
+      <h2>Hardware</h2>
+      <ul id="hardware-list"></ul>
+    </aside>
+    <div id="viewport">
+      <div id="step-card">
+        <div id="step-count">Step 0</div>
+        <h2 id="step-title">Loading…</h2>
+        <p id="step-text"></p>
+        <p id="step-tip" style="display:none"></p>
+        <p id="step-hardware"></p>
+        <p id="manual-ref"></p>
+      </div>
+    </div>
+  </div>
+  <div id="controls-bar">
+    <button id="prev-btn">← Prev</button>
+    <button id="next-btn">Next →</button>
+    <div id="step-dots"></div>
+    <button id="explode-btn" title="Shift+X">Explode ⇧X</button>
+    <input id="explode-range" type="range" min="0" max="100" value="0" title="Explode amount">
+    <button id="drawing-btn" title="Shift+V">Drawing ⇧V</button>
+    <button id="parts-btn" title="Shift+K">Parts ⇧K</button>
+  </div>
+  <footer>The 3D guide shows the order and the fit. The paper manual, the wiring table, and the real measurements stay the authority. Check every connection against them before powering anything.</footer>
+</div>
+<script type="module" src="../template/viewer.js"></script>
+</body>
+</html>
